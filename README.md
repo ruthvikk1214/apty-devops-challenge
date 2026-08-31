@@ -17,6 +17,8 @@ This repository demonstrates a Terraform‑driven deployment of a static website
 - Updated `variables.tf` to **remove the default** for `environment` so Terraform prompts for the environment on apply.
 - Fixed CloudFront configuration: removed legacy `s3_origin_config` block and added `default_root_object = "index.html"`.
 - Updated HTML template to use Terraform interpolation `${ environment }` instead of Jinja style `{{ environment }}`.
+- Added ACM certificate provisioning and DNS validation for a custom domain.
+- Added an A‑alias Route 53 record that maps `apty-devops.rk1214.in` to the CloudFront distribution.
 - Added outputs for `bucket_name` and `cloudfront_domain`.
 - Added documentation and a comprehensive README.
 
@@ -39,6 +41,13 @@ After a successful apply, retrieve the CloudFront domain:
 terraform output -raw cloudfront_domain
 ```
 Visit `https://<cloudfront_domain>` to see the banner with the selected environment name.
+
+### Custom Domain
+The deployment also provisions an ACM certificate for the domain **apty-devops.rk1214.in** and creates a Route 53 A‑alias record. Once the apply finishes, you can access the site directly via:
+```bash
+https://apty-devops.rk1214.in
+```
+The DNS record points to the CloudFront distribution and the certificate ensures HTTPS works without warnings.
 
 ## Cleanup
 ```bash
