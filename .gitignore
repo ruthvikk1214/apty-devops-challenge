@@ -1,0 +1,15 @@
+# Terraform
+.terraform/
+*.tfstate
+*.tfstate.*
+*.tfvars
+!*.tfvars.example
+
+# Environment files
+.env
+
+# OS files
+.DS_Store
+
+# VS Code
+.vscode/
