@@ -58,3 +58,51 @@ terraform destroy -auto-approve
 - `Terraform/root/` – Root module with variables, locals, provider, outputs.
 - `Terraform/modules/s3_cloudfront/` – Module that creates the S3 bucket, CloudFront distribution, OAC, policies, etc.
 - `Terraform/modules/s3_cloudfront/templates/index.html.tftpl` – HTML template used for the static site.
+
+## Part 2 – Docker + Helm Deployment (Local Kubernetes)
+
+This part packages the static page in an **nginx** container and deploys it to a local Kubernetes cluster (Kind, K3d, or Minikube) using a Helm chart.
+
+### Files added
+- `Dockerfile` – builds an nginx image serving `index.html`.
+- `index.html` – static HTML page with a placeholder for the environment name (`{{ .Values.env }}`).
+- `helm/apty-static/` – Helm chart containing:
+  - `Chart.yaml`
+  - `values.yaml` (default `env: Dev`)
+  - `templates/deployment.yaml`
+  - `templates/service.yaml`
+  - `_helpers.tpl`
+
+### Build and Deploy
+```bash
+# Build the Docker image
+docker build -t apty-static:latest .
+
+# Load the image into your local cluster (choose one)
+# Kind:
+kind load docker-image apty-static:latest
+# K3d:
+k3d image import apty-static:latest --cluster <cluster-name>
+# Minikube:
+minikube image load apty-static:latest
+
+# Install the Helm chart (override env as needed)
+helm install apty-static ./helm/apty-static --set env=Dev
+# For Prod:
+helm install apty-static-prod ./helm/apty-static --set env=Prod
+
+# Port‑forward to view the site
+kubectl port-forward svc/apty-static 8080:80
+# Open in browser:
+open http://localhost:8080
+```
+
+The banner on the page displays the environment name passed via the Helm `env` value.
+
+### Cleanup
+```bash
+helm uninstall apty-static   # or the release name you used
+kubectl delete svc apty-static
+```
+
+For more details, see the Helm chart files under `helm/apty-static/`.
