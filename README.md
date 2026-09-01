@@ -190,15 +190,19 @@ helm install apty-prod ./helm/apty-static \
 # Check pods are Running
 kubectl get pods -l "app.kubernetes.io/name=apty-static"
 
-# Port-forward Dev (localhost:8080)
-kubectl port-forward svc/apty-dev-apty-static 8080:80 &
+# Port-forward Dev (localhost:8080) — bind to all interfaces for EC2 access
+kubectl port-forward --address 0.0.0.0 svc/apty-dev-apty-static 8080:80 &
 
-# Port-forward Prod (localhost:8081)
-kubectl port-forward svc/apty-prod-apty-static 8081:80 &
+# Port-forward Prod (localhost:8081) — bind to all interfaces for EC2 access
+kubectl port-forward --address 0.0.0.0 svc/apty-prod-apty-static 8081:80 &
 
-# Open in browser
-# Dev:  http://localhost:8080  → Blue banner "Environment: Dev"
-# Prod: http://localhost:8081  → Red banner "Environment: Prod"
+# Test via cURL locally
+curl -s http://localhost:8080 | grep "Environment:"
+curl -s http://localhost:8081 | grep "Environment:"
+
+# Open in browser (if on a local machine, or using EC2 Public IP)
+# Dev:  http://<IP>:8080  → Blue banner "Environment: Dev"
+# Prod: http://<IP>:8081  → Red banner "Environment: Prod"
 ```
 
 ### 2.5 Cleanup
