@@ -17,10 +17,5 @@ variable "environment" {
 variable "project_name" {
   description = "Project name used for resource naming and tagging"
   type        = string
-  default     = "apty"
-}
-variable "commit_sha" {
-  description = "Git commit SHA"
-  type        = string
-  default     = "local-build"
+  default     = "apty-v2"
 }
