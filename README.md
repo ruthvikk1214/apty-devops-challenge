@@ -107,7 +107,6 @@ The pipeline (`.github/workflows/ci.yaml`) runs on push to `main` and pull reque
 | **Checkov Security Scanning** | Integrated `bridgecrewio/checkov-action` in `ci.yaml` to audit Terraform IaC security. |
 | **Kubernetes HPA** | Included `templates/hpa.yaml` in the Helm chart for automatic pod scaling based on CPU utilization. |
 | **Banner Git Commit SHA** | Dynamically injected Git commit SHA into Helm ConfigMaps to display on the Environment Banner. |
-| **OIDC AWS Authentication** | Documented role assumption syntax in `ci.yaml` for keyless GitHub Actions auth. |
 
 ---
 
