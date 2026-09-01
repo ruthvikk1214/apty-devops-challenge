@@ -1,19 +1,8 @@
 replicaCount: 1
-<<<<<<< HEAD
-=======
-
->>>>>>> 7f2c06cee096019fd9670eaa0505ee47b4bf2906
 image:
   repository: apty-static
   tag: latest
   pullPolicy: IfNotPresent
-<<<<<<< HEAD
-env: "Dev"
-commitSha: "local-build"   # Default – can be overridden with --set env=Prod
-service:
-  type: ClusterIP
-  port: 80
-=======
 
 env: "Dev"
 commitSha: "local-build"
@@ -22,7 +11,6 @@ service:
   type: ClusterIP
   port: 80
 
->>>>>>> 7f2c06cee096019fd9670eaa0505ee47b4bf2906
 resources:
   limits:
     cpu: "200m"
@@ -30,22 +18,11 @@ resources:
   requests:
     cpu: "100m"
     memory: "128Mi"
-<<<<<<< HEAD
-=======
-
->>>>>>> 7f2c06cee096019fd9670eaa0505ee47b4bf2906
 readinessProbe:
   httpGet:
     path: "/"
     port: http
   initialDelaySeconds: 5
   periodSeconds: 10
-<<<<<<< HEAD
-=======
-
->>>>>>> 7f2c06cee096019fd9670eaa0505ee47b4bf2906
-autoscaling:
-  enabled: false
   minReplicas: 1
-  maxReplicas: 5
   targetCPUUtilizationPercentage: 80
