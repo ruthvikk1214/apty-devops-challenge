@@ -164,8 +164,8 @@ helm/apty-static/
 Step-by-Step Deployment Guide
 1. Clone the Repository & Build Image
 Bash
-git clone [https://github.com/ruthvikk1214/apty-devops-challenge.git](https://github.com/ruthvikk1214/apty-devops-challenge.git)
-cd apty-devops-challenge
+git clone https://github.com/ruthvikk1214/apty-devops-challenge.git
+cd apty-devops-challenge/Docker
 
 # Build the Nginx base image
 docker build -t apty-static:latest .
@@ -183,7 +183,8 @@ helm install apty-dev ./helm/apty-static --set env=Dev
 
 # Deploy Prod environment release side-by-side
 helm install apty-prod ./helm/apty-static --set env=Prod
-Verification and Testing
+
+# Verification and Testing
 Check that all pods and services across both environments are healthy (1/1 Running):
 
 Bash
