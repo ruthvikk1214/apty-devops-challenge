@@ -20,6 +20,36 @@ CI validates the Terraform and deploys the Helm chart into an ephemeral Kind clu
 | [kubectl](https://kubernetes.io/docs/tasks/tools/) | ≥ 1.28 | Kubernetes CLI |
 | [Helm](https://helm.sh/docs/intro/install/) | ≥ 3.14 | Kubernetes package manager |
 
+### Quick Install on EC2 (Amazon Linux 2023)
+Run this block to install Docker, Git, Helm, Kind, and Kubectl all at once:
+```bash
+# 1. Update and install Git & Docker
+sudo dnf update -y
+sudo dnf install -y git docker
+sudo systemctl enable docker
+sudo systemctl start docker
+sudo usermod -aG docker ec2-user
+
+# 2. Install kubectl
+curl -O https://s3.us-west-2.amazonaws.com/amazon-eks/1.28.3/2023-11-14/bin/linux/amd64/kubectl
+chmod +x ./kubectl
+sudo mv ./kubectl /usr/local/bin/kubectl
+
+# 3. Install Helm
+curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3
+chmod 700 get_helm.sh
+./get_helm.sh
+rm get_helm.sh
+
+# 4. Install Kind
+curl -Lo ./kind https://kind.sigs.k8s.io/dl/v0.22.0/kind-linux-amd64
+chmod +x ./kind
+sudo mv ./kind /usr/local/bin/kind
+
+# 5. Apply Docker group changes (Log out and log back in, or run this)
+newgrp docker
+```
+
 ---
 
 ## Repository Structure
