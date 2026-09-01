@@ -106,3 +106,123 @@ kubectl delete svc apty-static
 ```
 
 For more details, see the Helm chart files under `helm/apty-static/`.
+
+### Prerequisites & Host Setup (Fresh Instance)
+
+Run the following commands on a freshly launched EC2 instance to install and configure all required tooling:
+
+```bash
+# 1. Install native docker and git
+sudo dnf install -y docker git
+
+# 2. Start and enable Docker service
+sudo systemctl enable --now docker
+
+# 3. Add ec2-user to the docker group
+sudo usermod -aG docker $USER
+
+# 4. Refresh your group session (or run: newgrp docker)
+newgrp docker
+
+# 1. Install kubectl
+curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+sudo install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
+rm kubectl
+
+# 2. Install Kind
+curl -Lo ./kind https://kind.sigs.k8s.io/dl/v0.22.0/kind-linux-amd64
+chmod +x ./kind
+sudo mv ./kind /usr/local/bin/kind
+
+# 3. Install Helm
+curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
+# 6. Verify installations
+docker --version
+kubectl version --client
+kind --version
+helm version
+Architecture & Key Features Implemented
+Decoupled Configuration via ConfigMap: Dynamic HTML markup and environment-specific banner styling (#0288d1 for Dev, #d32f2f for Prod) are managed entirely through Helm values and mounted into /usr/share/nginx/html/index.html.
+
+Automatic Rolling Restarts: Configured checksum/config: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }} under spec.template.metadata.annotations in deployment.yaml. Any upgrade to the ConfigMap triggers a zero-downtime rolling restart of the pods automatically.
+
+Standardized Helpers: Added templates/_helpers.tpl to provide resource naming and label helpers across all Kubernetes resources.
+
+Side-by-Side Multi-Environment Deployments: Supports deploying completely isolated releases (apty-dev and apty-prod) concurrently on the same cluster.
+
+Repository Structure (Helm)
+Plaintext
+helm/apty-static/
+├── Chart.yaml
+├── values.yaml
+└── templates/
+    ├── _helpers.tpl
+    ├── configmap.yaml
+    ├── deployment.yaml
+    ├── hpa.yaml
+    └── service.yaml
+Step-by-Step Deployment Guide
+1. Clone the Repository & Build Image
+Bash
+git clone [https://github.com/ruthvikk1214/apty-devops-challenge.git](https://github.com/ruthvikk1214/apty-devops-challenge.git)
+cd apty-devops-challenge
+
+# Build the Nginx base image
+docker build -t apty-static:latest .
+2. Create the Kind Cluster & Load the Image
+Bash
+# Create local Kubernetes cluster
+kind create cluster --name apty-cluster
+
+# Pre-load local Docker image directly into the Kind control plane node
+kind load docker-image apty-static:latest --name apty-cluster
+3. Deploy Dev and Prod Environments via Helm
+Bash
+# Deploy Dev environment release
+helm install apty-dev ./helm/apty-static --set env=Dev
+
+# Deploy Prod environment release side-by-side
+helm install apty-prod ./helm/apty-static --set env=Prod
+Verification and Testing
+Check that all pods and services across both environments are healthy (1/1 Running):
+
+Bash
+kubectl get pods,svc -l "app.kubernetes.io/name=apty-static"
+Test Both Endpoints Side-by-Side
+Forward ports in the background to access each environment independently:
+
+Bash
+# Clean up any lingering port-forward processes
+pkill -f "kubectl port-forward"
+
+# Forward Dev to port 8080 and Prod to port 8081
+kubectl port-forward svc/apty-dev-apty-static 8080:80 &
+kubectl port-forward svc/apty-prod-apty-static 8081:80 &
+
+# 1. Verify Dev Endpoint (Returns Blue Banner: "Environment: Dev")
+curl http://localhost:8080
+
+# 2. Verify Prod Endpoint (Returns Red Banner: "Environment: Prod")
+curl http://localhost:8081
+
+# Stop port-forwards
+pkill -f "kubectl port-forward"
+In-Place Upgrade & Checksum Verification
+To test Helm's dynamic values injection and automatic rolling pod restarts without rebuilding the Docker image:
+
+Bash
+# Upgrade the Dev release to Prod dynamically
+helm upgrade apty-dev ./helm/apty-static --set env=Prod
+
+# Verify automatic rollout status
+kubectl rollout status deployment/apty-dev-apty-static
+Teardown & Cleanup
+Bash
+# Uninstall Helm releases
+helm uninstall apty-dev
+helm uninstall apty-prod
+
+# Delete the local Kind cluster
+kind delete cluster --name apty-cluster
+
+<FollowUp label="Would you like to generate the complete Part 3 section for GitHub Actions CI now?" query="Generate the Part 3 section of the README covering the GitHub Actions CI pipeline setup, secrets configuration, and verification steps."/>
