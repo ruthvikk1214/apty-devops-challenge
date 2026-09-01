@@ -1,0 +1,19 @@
+# Terraform
+.terraform/
+*.tfstate
+*.tfstate.*
+*.auto.tfvars
+secrets.tfvars
+crash.log
+
+# Keep env-dev.tfvars and env-prod.tfvars — they contain no secrets.
+# Only secrets.tfvars and *.auto.tfvars are ignored.
+
+# Environment files
+.env
+
+# OS files
+.DS_Store
+
+# VS Code
+.vscode/

@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>APTY Static Site</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background: #f4f6f8;
+        }
+        .banner {
+            padding: 24px 48px;
+            border-radius: 8px;
+            font-size: 2rem;
+            font-weight: bold;
+            color: #fff;
+            background: #0288d1;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            text-align: center;
+        }
+        .meta {
+            margin-top: 12px;
+            font-size: 0.9rem;
+            color: #555;
+            font-family: monospace;
+        }
+    </style>
+</head>
+<body>
+    <!-- This is a placeholder — the real index.html is injected via
+         the Helm ConfigMap at deploy time (see helm/apty-static/templates/configmap.yaml). -->
+    <div class="banner">Environment: PLACEHOLDER</div>
+    <div class="meta">Commit SHA: PLACEHOLDER</div>
+</body>
+</html>
