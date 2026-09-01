@@ -1,6 +1,7 @@
 resource "aws_s3_bucket" "website" {
   bucket = var.bucket_name
 }
+
 resource "aws_s3_bucket_public_access_block" "website" {
   bucket = aws_s3_bucket.website.id
 
@@ -31,6 +32,7 @@ resource "aws_s3_bucket_policy" "website" {
   bucket = aws_s3_bucket.website.id
   policy = data.aws_iam_policy_document.s3_oac_policy.json
 }
+
 resource "aws_s3_bucket_versioning" "website_versioning" {
   bucket = aws_s3_bucket.website.id
   versioning_configuration {
@@ -46,18 +48,17 @@ resource "aws_s3_bucket_server_side_encryption_configuration" "website_enc" {
     }
   }
 }
+
 resource "aws_s3_object" "index" {
   bucket = aws_s3_bucket.website.id
   key    = "index.html"
   content = templatefile(var.index_template, {
     environment = var.environment
-    commit_sha  = var.commit_sha
   })
   content_type           = "text/html"
   server_side_encryption = "AES256"
   etag = md5(templatefile(var.index_template, {
     environment = var.environment
-    commit_sha  = var.commit_sha
   }))
 }
 
@@ -68,45 +69,10 @@ resource "aws_cloudfront_origin_access_control" "website" {
   signing_protocol                  = "sigv4"
 }
 
-# ── ACM certificate (must live in us-east-1 for CloudFront) ──────────────────
-resource "aws_acm_certificate" "cert" {
-  domain_name       = var.custom_domain
-  validation_method = "DNS"
-
-  lifecycle {
-    create_before_destroy = true
-  }
-}
-
-resource "aws_route53_record" "cert_validation" {
-  for_each = {
-    for dvo in aws_acm_certificate.cert.domain_validation_options : dvo.domain_name => {
-      name   = dvo.resource_record_name
-      type   = dvo.resource_record_type
-      record = dvo.resource_record_value
-    }
-  }
-
-  zone_id = var.zone_id
-  name    = each.value.name
-  type    = each.value.type
-  ttl     = 60
-  records = [each.value.record]
-
-  allow_overwrite = true
-}
-
-resource "aws_acm_certificate_validation" "cert" {
-  certificate_arn         = aws_acm_certificate.cert.arn
-  validation_record_fqdns = [for record in aws_route53_record.cert_validation : record.fqdn]
-}
-
 resource "aws_cloudfront_distribution" "website" {
   enabled             = true
   default_root_object = "index.html"
-
-  # Custom domain – CloudFront will only accept requests for this hostname
-  aliases = [var.custom_domain]
+  comment             = "${var.project_name} ${var.environment} static site"
 
   origin {
     domain_name              = aws_s3_bucket.website.bucket_regional_domain_name
@@ -134,12 +100,21 @@ resource "aws_cloudfront_distribution" "website" {
     }
   }
 
-  # Use the ACM cert so HTTPS works on the custom domain
+  # Default CloudFront certificate — no custom domain required
   viewer_certificate {
-    acm_certificate_arn      = aws_acm_certificate_validation.cert.certificate_arn
-    ssl_support_method       = "sni-only"
-    minimum_protocol_version = "TLSv1.2_2021"
+    cloudfront_default_certificate = true
+  }
+}
+
+# ── Bonus: CloudFront cache invalidation on content change ────────
+resource "null_resource" "invalidate_cache" {
+  triggers = {
+    etag = aws_s3_object.index.etag
   }
 
-  depends_on = [aws_acm_certificate_validation.cert]
+  provisioner "local-exec" {
+    command = "aws cloudfront create-invalidation --distribution-id ${aws_cloudfront_distribution.website.id} --paths /* --region ${var.aws_region}"
+  }
+
+  depends_on = [aws_s3_object.index]
 }
