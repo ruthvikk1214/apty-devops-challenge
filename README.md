@@ -105,6 +105,6 @@ The pipeline (`.github/workflows/ci.yaml`) runs on push to `main` and pull reque
 - **Dynamic Helm SHA Injection:** Passed the Git commit SHA dynamically into Helm ConfigMaps to keep container deployment lightweight and avoid unnecessary Terraform state churn.
 
 **What I'd Do With More Time:**
+- **Custom Domain & DNS:** Provision a dedicated Route53 hosted zone and ACM SSL certificate for a custom domain (e.g., `apty-devops.rk1214.in`).
 - **Environment State Isolation:** Use distinct S3 state keys per environment (`-backend-config="key=env/dev.tfstate"`).
 - **Keyless AWS Authentication:** Migrate GitHub Actions authentication from IAM long-lived keys to OIDC role assumption.
-- **Automated E2E Testing:** Implement Terratest (Go) to validate CloudFront HTTPS endpoints and HTML content automatically after deployment.
