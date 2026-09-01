@@ -195,17 +195,18 @@ Bash
 # Clean up any lingering port-forward processes
 pkill -f "kubectl port-forward"
 
-# Forward Dev to port 8080 and Prod to port 8081
-kubectl port-forward svc/apty-dev-apty-static 8080:80 &
-kubectl port-forward svc/apty-prod-apty-static 8081:80 &
+
+# Forward Dev service to port 8080 and Prod service to port 8081
+kubectl port-forward --address 0.0.0.0 svc/apty-dev-apty-static 8080:80 &
+kubectl port-forward --address 0.0.0.0 svc/apty-prod-apty-static 8081:80 &
 
 # 1. Verify Dev Endpoint (Returns Blue Banner: "Environment: Dev")
-curl http://localhost:8080
+http://<public-ip-address>:8080
 
 # 2. Verify Prod Endpoint (Returns Red Banner: "Environment: Prod")
-curl http://localhost:8081
+http://<public-ip-address>:8081
 
-# Stop port-forwards
+# Stop port-forwards when validation is complete
 pkill -f "kubectl port-forward"
 In-Place Upgrade & Checksum Verification
 To test Helm's dynamic values injection and automatic rolling pod restarts without rebuilding the Docker image:
