@@ -171,6 +171,7 @@ cd apty-devops-challenge
 ```bash
 cd Docker
 docker build -t apty-static:latest .
+cd ..
 ```
 
 ### 2.3 Create a Kind Cluster & Load the Image
