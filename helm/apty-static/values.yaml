@@ -3,7 +3,8 @@ image:
   repository: apty-static
   tag: latest
   pullPolicy: IfNotPresent
-env: Dev   # Default – can be overridden with --set env=Prod
+env: "Dev"
+commitSha: "local-build"   # Default – can be overridden with --set env=Prod
 service:
   type: ClusterIP
   port: 80

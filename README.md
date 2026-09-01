@@ -86,10 +86,17 @@ k3d image import apty-static:latest --cluster <cluster-name>
 # Minikube:
 minikube image load apty-static:latest
 
-# Install the Helm chart (override env as needed)
-helm install apty-static ./helm/apty-static --set env=Dev
-# For Prod:
-helm install apty-static-prod ./helm/apty-static --set env=Prod
+# Helm Install For Dev Environment
+helm install apty-dev ./helm/apty-static \
+  --set env=Dev \
+  --set commitSha=$GIT_SHA \
+  --set image.pullPolicy=IfNotPresent
+
+# Helm Install For Prod Environment
+helm install apty-prod ./helm/apty-static \
+  --set env=Prod \
+  --set commitSha=$GIT_SHA \
+  --set image.pullPolicy=IfNotPresent
 
 # Port‑forward to view the site
 kubectl port-forward svc/apty-static 8080:80

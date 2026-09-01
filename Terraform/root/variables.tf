@@ -19,3 +19,8 @@ variable "project_name" {
   type        = string
   default     = "apty"
 }
+variable "commit_sha" {
+  description = "Git commit SHA"
+  type        = string
+  default     = "local-build"
+}

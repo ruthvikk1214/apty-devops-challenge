@@ -32,3 +32,8 @@ variable "zone_id" {
   default     = "Z031906510N5GWM6MW07L"
 }
 
+variable "commit_sha" {
+  description = "The Git commit SHA or build ID to display on the banner"
+  type        = string
+  default     = "local-build"
+}
