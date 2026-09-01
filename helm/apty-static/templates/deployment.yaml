@@ -16,10 +16,23 @@ spec:
       labels:
         {{- include "apty-static.selectorLabels" . | nindent 8 }}
     spec:
+<<<<<<< HEAD
+=======
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 101
+        fsGroup: 101
+>>>>>>> 7f2c06cee096019fd9670eaa0505ee47b4bf2906
       containers:
         - name: nginx
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
+<<<<<<< HEAD
+=======
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: false
+>>>>>>> 7f2c06cee096019fd9670eaa0505ee47b4bf2906
           ports:
             - containerPort: 80
               name: http

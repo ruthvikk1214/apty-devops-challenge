@@ -2,8 +2,17 @@
 .terraform/
 *.tfstate
 *.tfstate.*
+<<<<<<< HEAD
 *.tfvars
 !*.tfvars.example
+=======
+*.auto.tfvars
+secrets.tfvars
+crash.log
+
+# Keep env-dev.tfvars and env-prod.tfvars — they contain no secrets.
+# Only secrets.tfvars and *.auto.tfvars are ignored.
+>>>>>>> 7f2c06cee096019fd9670eaa0505ee47b4bf2906
 
 # Environment files
 .env

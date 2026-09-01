@@ -2,6 +2,7 @@ name: CI Pipeline
 
 on:
   push:
+<<<<<<< HEAD
     branches: [ main ]
   pull_request:
     branches: [ main ]
@@ -9,6 +10,19 @@ on:
 jobs:
   # -------------------------------------------------------------
   # Job 1: Static Security Analysis (Bonus Scope)
+=======
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+env:
+  AWS_REGION: us-east-1
+  TF_WORKING_DIR: ./Terraform/root
+
+jobs:
+  # -------------------------------------------------------------
+  # Job 1: Static Security Analysis (Bonus)
+>>>>>>> 7f2c06cee096019fd9670eaa0505ee47b4bf2906
   # -------------------------------------------------------------
   security-scan:
     name: Security Lint (Checkov)
@@ -32,7 +46,11 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
+<<<<<<< HEAD
         working-directory: ./Terraform/root
+=======
+        working-directory: ${{ env.TF_WORKING_DIR }}
+>>>>>>> 7f2c06cee096019fd9670eaa0505ee47b4bf2906
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
@@ -47,10 +65,21 @@ jobs:
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+<<<<<<< HEAD
           aws-region: ${{ secrets.AWS_REGION || 'us-east-1' }}
 
       - name: Terraform Format Check
         run: terraform fmt -check -recursive
+=======
+          aws-region: ${{ env.AWS_REGION }}
+          # ── Bonus: For OIDC auth, comment out the two lines above and use:
+          # role-to-assume: arn:aws:iam::<ACCOUNT_ID>:role/github-actions-terraform
+          # role-session-name: GitHubActionsTerraform
+
+      - name: Terraform Format Check
+        run: terraform fmt -check -recursive ../
+        # Runs from Terraform/ to cover root + modules
+>>>>>>> 7f2c06cee096019fd9670eaa0505ee47b4bf2906
 
       - name: Terraform Init
         run: terraform init
@@ -58,6 +87,7 @@ jobs:
       - name: Terraform Validate
         run: terraform validate
 
+<<<<<<< HEAD
       - name: Terraform Plan (Dev Environment)
         run: terraform plan -var-file="env-dev.tfvars" -var="commit_sha=${{ github.sha }}" -no-color
 
@@ -66,6 +96,50 @@ jobs:
 
   # -------------------------------------------------------------
   # Job 3: Helm Lint, Ephemeral Kind Cluster & In-Cluster Rollout Test (Bonus Scope)
+=======
+      - name: Terraform Plan (Dev)
+        run: terraform plan -var-file="env-dev.tfvars" -no-color
+
+      - name: Terraform Plan (Prod)
+        run: terraform plan -var-file="env-prod.tfvars" -no-color
+
+  # -------------------------------------------------------------
+  # Job 3: Bonus — Terraform Apply (gated on main, manual approval)
+  # -------------------------------------------------------------
+  terraform-apply:
+    name: Terraform Apply (Dev)
+    needs: [terraform-ci, security-scan]
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    runs-on: ubuntu-latest
+    environment: production          # Requires manual approval in GitHub Settings → Environments
+    defaults:
+      run:
+        working-directory: ${{ env.TF_WORKING_DIR }}
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.10.0
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Terraform Init
+        run: terraform init
+
+      - name: Terraform Apply (Dev)
+        run: terraform apply -auto-approve -var-file="env-dev.tfvars"
+
+  # -------------------------------------------------------------
+  # Job 4: Helm Lint & Kind Integration Test (Bonus)
+>>>>>>> 7f2c06cee096019fd9670eaa0505ee47b4bf2906
   # -------------------------------------------------------------
   helm-and-kind-ci:
     name: Helm Lint & Kind Integration Test

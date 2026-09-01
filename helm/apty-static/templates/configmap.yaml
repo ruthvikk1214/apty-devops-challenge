@@ -6,7 +6,11 @@ metadata:
     {{- include "apty-static.labels" . | nindent 4 }}
 data:
   index.html: |
+<<<<<<< HEAD
    <!DOCTYPE html>
+=======
+    <!DOCTYPE html>
+>>>>>>> 7f2c06cee096019fd9670eaa0505ee47b4bf2906
     <html lang="en">
     <head>
       <meta charset="UTF-8">

@@ -4,6 +4,7 @@
     <meta charset="UTF-8" />
     <title>APTY Static Site</title>
     <style>
+<<<<<<< HEAD
         body {font-family: Arial, sans-serif; text-align:center; margin-top: 50px;}
         .banner {padding: 20px; background: #4a90e2; color: white; font-size: 1.5rem;}
     </style>
@@ -11,5 +12,40 @@
 <body>
     <div class="banner">Environment: {{ .Values.env }}</div>
     <p>Welcome to the APTY static site.</p>
+=======
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background: #f4f6f8;
+        }
+        .banner {
+            padding: 24px 48px;
+            border-radius: 8px;
+            font-size: 2rem;
+            font-weight: bold;
+            color: #fff;
+            background: #0288d1;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            text-align: center;
+        }
+        .meta {
+            margin-top: 12px;
+            font-size: 0.9rem;
+            color: #555;
+            font-family: monospace;
+        }
+    </style>
+</head>
+<body>
+    <!-- This is a placeholder — the real index.html is injected via
+         the Helm ConfigMap at deploy time (see helm/apty-static/templates/configmap.yaml). -->
+    <div class="banner">Environment: PLACEHOLDER</div>
+    <div class="meta">Commit SHA: PLACEHOLDER</div>
+>>>>>>> 7f2c06cee096019fd9670eaa0505ee47b4bf2906
 </body>
 </html>
