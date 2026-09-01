@@ -11,10 +11,10 @@ spec:
       {{- include "apty-static.selectorLabels" . | nindent 6 }}
   template:
     metadata:
-      labels:
-        {{- include "apty-static.selectorLabels" . | nindent 8 }}
       annotations:
         checksum/config: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
+      labels:
+        {{- include "apty-static.selectorLabels" . | nindent 8 }}
     spec:
       containers:
         - name: nginx
@@ -41,11 +41,11 @@ spec:
             periodSeconds: 15
           resources:
             limits:
-              cpu: {{ .Values.resources.limits.cpu }}
-              memory: {{ .Values.resources.limits.memory }}
+              cpu: {{ .Values.resources.limits.cpu | quote }}
+              memory: {{ .Values.resources.limits.memory | quote }}
             requests:
-              cpu: {{ .Values.resources.requests.cpu }}
-              memory: {{ .Values.resources.requests.memory }}
+              cpu: {{ .Values.resources.requests.cpu | quote }}
+              memory: {{ .Values.resources.requests.memory | quote }}
       volumes:
         - name: html-volume
           configMap:

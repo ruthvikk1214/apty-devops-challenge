@@ -1,4 +1,3 @@
-cat <<'EOF' > _helpers.tpl
 {{/*
 Expand the name of the chart.
 */}}
@@ -41,4 +40,3 @@ Selector labels
 app.kubernetes.io/name: {{ include "apty-static.name" . }}
 app.kubernetes.io/instance: {{ .Release.Name }}
 {{- end }}
-EOF
