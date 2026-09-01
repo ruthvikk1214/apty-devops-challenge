@@ -84,7 +84,6 @@ helm uninstall apty-dev
 helm uninstall apty-prod
 kind delete cluster --name apty-cluster
 ```
-```
 
 ---
 
@@ -95,6 +94,20 @@ The pipeline (`.github/workflows/ci.yaml`) runs on push to `main` and pull reque
 - **Terraform CI**: Executes `fmt -check`, `validate`, and multi-environment `plan` (Dev & Prod).
 - **Terraform Apply**: Gated on push to `main` with manual environment approval.
 - **Helm & Kind Integration**: Spins up an ephemeral Kind cluster, builds the image, deploys releases, and verifies pod rollout status.
+
+---
+
+## 🌟 Bonus Features Implemented
+
+| Bonus Feature | Implementation Details |
+|---------------|------------------------|
+| **CloudFront Cache Invalidation** | Implemented in `Terraform/modules/s3_cloudfront/main.tf` via `null_resource.invalidate_cache` on index etag change. |
+| **Gated Apply with Manual Approval** | Configured in `.github/workflows/ci.yaml` (`terraform-apply` job requiring `production` environment review). |
+| **Helm Lint & Kind Deployment in CI** | Ephemeral Kind cluster creation, Docker build, Helm install, and rollout status validation in `ci.yaml`. |
+| **Checkov Security Scanning** | Integrated `bridgecrewio/checkov-action` in `ci.yaml` to audit Terraform IaC security. |
+| **Kubernetes HPA** | Included `templates/hpa.yaml` in the Helm chart for automatic pod scaling based on CPU utilization. |
+| **Banner Git Commit SHA** | Dynamically injected Git commit SHA into Helm ConfigMaps to display on the Environment Banner. |
+| **OIDC AWS Authentication** | Documented role assumption syntax in `ci.yaml` for keyless GitHub Actions auth. |
 
 ---
 
