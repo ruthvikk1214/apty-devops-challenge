@@ -22,9 +22,3 @@ variable "project_name" {
   description = "Project name used for resource naming and tagging"
   type        = string
 }
-
-variable "commit_sha" {
-  description = "The Git commit SHA or build ID to display on the banner"
-  type        = string
-  default     = "local-build"
-}

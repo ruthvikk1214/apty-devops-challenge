@@ -19,9 +19,3 @@ variable "project_name" {
   type        = string
   default     = "apty"
 }
-
-variable "commit_sha" {
-  description = "Git commit SHA displayed on the banner"
-  type        = string
-  default     = "local-build"
-}

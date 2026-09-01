@@ -54,13 +54,13 @@ resource "aws_s3_object" "index" {
   key    = "index.html"
   content = templatefile(var.index_template, {
     environment = var.environment
-    commit_sha  = var.commit_sha
+
   })
   content_type           = "text/html"
   server_side_encryption = "AES256"
   etag = md5(templatefile(var.index_template, {
     environment = var.environment
-    commit_sha  = var.commit_sha
+
   }))
 }
 
