@@ -78,6 +78,12 @@ kubectl port-forward --address 0.0.0.0 svc/apty-prod-apty-static 8081:80 &
 
 curl -s http://localhost:8080 | grep "Environment:"
 curl -s http://localhost:8081 | grep "Environment:"
+
+# 5. Cleanup
+helm uninstall apty-dev
+helm uninstall apty-prod
+kind delete cluster --name apty-cluster
+```
 ```
 
 ---
