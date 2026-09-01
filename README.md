@@ -20,42 +20,7 @@ CI validates the Terraform and deploys the Helm chart into an ephemeral Kind clu
 | [kubectl](https://kubernetes.io/docs/tasks/tools/) | ≥ 1.28 | Kubernetes CLI |
 | [Helm](https://helm.sh/docs/intro/install/) | ≥ 3.14 | Kubernetes package manager |
 
-### Quick Install on EC2 (Amazon Linux 2023)
-Run this block to install Docker, Git, Helm, Kind, and Kubectl all at once:
-```bash
-# 1. Update and install Git & Docker
-sudo dnf update -y
-sudo dnf install -y git docker
-sudo systemctl enable docker
-sudo systemctl start docker
-sudo usermod -aG docker ec2-user
 
-# 2. Install kubectl
-curl -O https://s3.us-west-2.amazonaws.com/amazon-eks/1.28.3/2023-11-14/bin/linux/amd64/kubectl
-chmod +x ./kubectl
-sudo mv ./kubectl /usr/local/bin/kubectl
-
-# 3. Install Helm
-curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3
-chmod 700 get_helm.sh
-./get_helm.sh
-rm get_helm.sh
-
-# 4. Install Kind
-curl -Lo ./kind https://kind.sigs.k8s.io/dl/v0.22.0/kind-linux-amd64
-chmod +x ./kind
-sudo mv ./kind /usr/local/bin/kind
-
-# 5. Apply Docker group changes (Log out and log back in, or run this)
-newgrp docker
-
-# 6. Validate Installations
-git --version
-docker --version
-kubectl version --client
-helm version
-kind --version
-```
 
 ---
 
@@ -158,21 +123,64 @@ terraform destroy -var-file=env-dev.tfvars
 
 ## Part 2 — Docker + Helm on Local Kubernetes
 
-### 2.1 Build the Docker Image
+### 2.1 Setup Environment (EC2 / Amazon Linux 2023)
+
+Run this block to install Docker, Git, Helm, Kind, and Kubectl all at once:
+
+```bash
+# 1. Update and install Git & Docker
+sudo dnf update -y
+sudo dnf install -y git docker
+sudo systemctl enable docker
+sudo systemctl start docker
+sudo usermod -aG docker ec2-user
+
+# 2. Install kubectl
+curl -O https://s3.us-west-2.amazonaws.com/amazon-eks/1.28.3/2023-11-14/bin/linux/amd64/kubectl
+chmod +x ./kubectl
+sudo mv ./kubectl /usr/local/bin/kubectl
+
+# 3. Install Helm
+curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3
+chmod 700 get_helm.sh
+./get_helm.sh
+rm get_helm.sh
+
+# 4. Install Kind
+curl -Lo ./kind https://kind.sigs.k8s.io/dl/v0.22.0/kind-linux-amd64
+chmod +x ./kind
+sudo mv ./kind /usr/local/bin/kind
+
+# 5. Apply Docker group changes (Log out and log back in, or run this)
+newgrp docker
+
+# 6. Validate Installations
+git --version
+docker --version
+kubectl version --client
+helm version
+kind --version
+
+# 7. Clone the Repository
+git clone https://github.com/ruthvikk1214/apty-devops-challenge.git
+cd apty-devops-challenge
+```
+
+### 2.2 Build the Docker Image
 
 ```bash
 cd Docker
 docker build -t apty-static:latest .
 ```
 
-### 2.2 Create a Kind Cluster & Load the Image
+### 2.3 Create a Kind Cluster & Load the Image
 
 ```bash
 kind create cluster --name apty-cluster
 kind load docker-image apty-static:latest --name apty-cluster
 ```
 
-### 2.3 Deploy with Helm
+### 2.4 Deploy with Helm
 
 ```bash
 # Set the Git SHA for the banner
@@ -191,7 +199,7 @@ helm install apty-prod ./helm/apty-static \
   --set image.pullPolicy=IfNotPresent
 ```
 
-### 2.4 Verify
+### 2.5 Verify
 
 ```bash
 # Check pods are Running
@@ -212,7 +220,7 @@ curl -s http://localhost:8081 | grep "Environment:"
 # Prod: http://<IP>:8081  → Red banner "Environment: Prod"
 ```
 
-### 2.5 Cleanup
+### 2.6 Cleanup
 
 ```bash
 helm uninstall apty-dev
