@@ -226,4 +226,3 @@ helm uninstall apty-prod
 # Delete the local Kind cluster
 kind delete cluster --name apty-cluster
 
-<FollowUp label="Would you like to generate the complete Part 3 section for GitHub Actions CI now?" query="Generate the Part 3 section of the README covering the GitHub Actions CI pipeline setup, secrets configuration, and verification steps."/>
