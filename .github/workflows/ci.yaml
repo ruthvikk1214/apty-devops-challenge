@@ -67,10 +67,10 @@ jobs:
         run: terraform validate
 
       - name: Terraform Plan (Dev)
-        run: terraform plan -var-file="env-dev.tfvars" -var="commit_sha=${{ github.sha }}" -no-color
+        run: terraform plan -var-file="env-dev.tfvars" -no-color
 
       - name: Terraform Plan (Prod)
-        run: terraform plan -var-file="env-prod.tfvars" -var="commit_sha=${{ github.sha }}" -no-color
+        run: terraform plan -var-file="env-prod.tfvars" -no-color
 
   # -------------------------------------------------------------
   # Job 3: Bonus — Terraform Apply (gated on main, manual approval)
@@ -104,7 +104,7 @@ jobs:
         run: terraform init
 
       - name: Terraform Apply (Dev)
-        run: terraform apply -auto-approve -var-file="env-dev.tfvars" -var="commit_sha=${{ github.sha }}"
+        run: terraform apply -auto-approve -var-file="env-dev.tfvars"
 
   # -------------------------------------------------------------
   # Job 4: Helm Lint & Kind Integration Test (Bonus)
