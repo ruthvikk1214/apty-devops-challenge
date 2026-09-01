@@ -48,6 +48,13 @@ sudo mv ./kind /usr/local/bin/kind
 
 # 5. Apply Docker group changes (Log out and log back in, or run this)
 newgrp docker
+
+# 6. Validate Installations
+git --version
+docker --version
+kubectl version --client
+helm version
+kind --version
 ```
 
 ---
