@@ -1,9 +1,11 @@
 variable "environment" {
-  type = string
+  description = "Deployment environment label displayed on the banner (Dev or Prod)"
+  type        = string
 }
 
 variable "aws_region" {
-  type = string
+  description = "AWS region where resources will be created"
+  type        = string
 }
 
 variable "bucket_name" {
@@ -17,23 +19,6 @@ variable "index_template" {
 }
 
 variable "project_name" {
-  type = string
-}
-
-variable "custom_domain" {
-  description = "Fully‑qualified domain name you want to point at CloudFront"
+  description = "Project name used for resource naming and tagging"
   type        = string
-  default     = "apty-devops.rk1214.in"
-}
-
-variable "zone_id" {
-  description = "Hosted‑zone ID for the domain in Route 53"
-  type        = string
-  default     = "Z031906510N5GWM6MW07L"
-}
-
-variable "commit_sha" {
-  description = "The Git commit SHA or build ID to display on the banner"
-  type        = string
-  default     = "local-build"
 }
